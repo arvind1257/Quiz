@@ -307,7 +307,7 @@
             {
                 if(type=="STUDENT")
                 {
-                    location.href="quiz_room.php?qid="+no;
+                    location.href="squiz_room.php?qid="+no;
                 }
                 else
                 {

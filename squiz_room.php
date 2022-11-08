@@ -173,9 +173,52 @@
         $etime="";
         $shuffle="";
         $qname="";
+        date_default_timezone_set("Asia/Kolkata");   //India time (GMT+5:30)
+        $currentdate = date('Y-m-d');
+        $currenttime = date('H:i');
         $result = mysqli_query($con,"select * from qlist where qid='$qid'");
         while($rows = mysqli_fetch_assoc($result))
         {
+            if($rows["QDATE"]==$currentdate)
+            {
+                if($rows["STIME"]<=$currenttime)
+                {
+                    echo 'hi';
+                    $check=mysqli_query($con,"update qlist set status='ACTIVE' where qid='$qid'");
+                    if($check)
+                    {
+                        echo "done1";
+                    }
+                    else
+                    {
+                        echo "error1";
+                    }
+                    if($rows["ETIME"]<=$currenttime)
+                    {
+                        $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='$qid'");
+                        if($check1)
+                        {
+                            echo "done2";
+                        }
+                        else
+                        {
+                            echo "error2";
+                        }
+                    }
+                }
+            }
+            else if($rows["QDATE"]<$currentdate)
+            {
+                $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='$qid'");
+                        if($check1)
+                        {
+                            echo "done2";
+                        }
+                        else
+                        {
+                            echo "error2";
+                        }
+            }
             $qdate = $rows["QDATE"];
             $qname = $rows["QNAME"];
             $stime = $rows["STIME"];
@@ -482,6 +525,7 @@
                             document.getElementById('status').innerHTML=": Completed";
                             document.getElementById('download').style.display="";
                             document.getElementById('student_list').style.display="none";
+                            document.getElementById('edit').style.display="none";
                             //document.getElementById('student_list2').style.display="";
                         }
                     }
@@ -497,7 +541,7 @@
             {
                 document.getElementById('tabcontent1').style.display="block";
                 document.getElementById('edit').style.display="none";
-                document.getElementById('student_list').style.display="";
+                document.getElementById('student_list').style.display="none";
                 document.getElementById('download').style.display="";
                 document.getElementById('tabcontent').style.display="none";
                 document.getElementById('status').innerHTML=": Completed";    
