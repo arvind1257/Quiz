@@ -239,7 +239,7 @@
         <div class="tabcontent" id="tabcontent">
             <fieldset class="scroll">
                 <legend><font size="6pt"><b><?php echo $qname;?></b></font></legend>
-                <p style="font-size:50px; text-align:center; vertical-align:middle;">Quiz not yet started</p>
+                <p style="font-size:50px; text-align:center; vertical-align:middle;">After quiz get completed the result will be published</p>
             </fieldset>
         </div>
         <div class="tabcontent" id="tabcontent1">
@@ -299,19 +299,6 @@
                 else s1 = s;
                 if(m<10) m1 = "0"+m;
                 else m1 = m;
-                if((start[0]==h1 && start[1]==m1 && s1=="00"))
-                {
-                    location.href="squiz_room.php?qid="+document.getElementById('qid').value;
-                }
-                if((end[0]==h1 && end[1]==m1 && s1=="00"))
-                {
-                    alert("Time Over. Quiz Submitted Successfully");
-                    document.getElementById('form1').submit();
-                }
-                if((end[0]==h1 && end[1]<m1 ) || (end[0]<h1))
-                {
-                    location.href="cquiz_room.php?qid="+document.getElementById('qid').value;
-                }
                 document.getElementById('currenttime').innerHTML=h1+":"+m1+":"+s1;
                 setTimeout('gettime()',1000);                    
             }
@@ -341,32 +328,26 @@
             if((test_date[0]===y1) && (test_date[1]===mo1) && (test_date[2]===d1))
             {
                
-                if((start[0]===h1 && start[1]<=m1)||(start[0]<h1))
+                if((end[0]===h1 && end[1]<=m1)||(end[0]<h1))
                 {
-                    document.getElementById('tabcontent1').style.display="block";
                     document.getElementById('tabcontent').style.display="none";
-                    document.getElementById('status').innerHTML=": Started";
-                    if(end[0]<=h1)
-                    {
-                        if((end[0]===h1 && end[1]<=m1)||(end[0]<h1))
-                        {
-                            document.getElementById('status').innerHTML=": Completed";
-                        }
-                    }
+                    document.getElementById('tabcontent1').style.display="";
                 }
                 else
                 {
                     document.getElementById('tabcontent1').style.display="none";
+                    document.getElementById('tabcontent').style.display="";
                 }
             }
             else if(((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]<d1)) || ((test_date[0]==y1) && (test_date[1]<mo1)) || (test_date[0]<y1))
             {
                 document.getElementById('tabcontent1').style.display="block";
-                document.getElementById('tabcontent').style.display="none";
-                document.getElementById('status').innerHTML=": Completed";    
+                document.getElementById('tabcontent').style.display="none"; 
             }
             else
             {
+                
+                document.getElementById('tabcontent').style.display="";
                 document.getElementById('tabcontent1').style.display="none";
             }
             function submit1()

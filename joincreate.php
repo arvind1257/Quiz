@@ -67,6 +67,52 @@
         }
         header("Location: class_room.php?no=".$_REQUEST["cid"]);
     }
+    else if(isset($_REQUEST["qid1"]))
+    {
+        $qid=$_REQUEST["qid1"];
+        $questions = $_REQUEST["question"];
+        $option = $_REQUEST["option"];
+        $type = $_REQUEST["type"];
+        echo $_REQUEST["qid1"]."<br>";
+        echo $uid."<br>";
+        echo "COMPLETED<br>";
+        $result = mysqli_query($con,"select * from qattempt where qid='$qid' and sid='$uid'");
+        while($rows= mysqli_fetch_assoc($result))
+        {
+            for($i=1;$i<=count($questions);$i++)
+            {
+                if($rows["QUESTIONS"]==$questions[$i])
+                {
+                    $correctanswer = $option[$i][0];
+                    for($j=1;$j<count($option[$i]);$j++)
+                    { 
+                        $correctanswer.=",".$option[$i][$j];
+                    }
+                    echo $questions[$i]."=".$correctanswer."<br>";
+                }
+            }
+        }
+        $marks=0;
+        $result1 = mysqli_query($con,"select * from qquestions where qid='$qid'");
+        while($rows= mysqli_fetch_assoc($result1))
+        {
+            for($i=1;$i<=count($questions);$i++)
+            {
+                if($rows["QUESTIONS"]==$questions[$i])
+                {
+                    $correctanswer = $option[$i][0];
+                    for($j=1;$j<count($option[$i]);$j++){ 
+                        $correctanswer.=",".$option[$i][$j];
+                    }
+                    if($rows["ANSWER"]==$correctanswer)
+                    {
+                        $marks+=1;
+                    }
+                }    
+            }
+        }
+        echo "Marks=$marks";
+    }
     else if(isset($_REQUEST["qid"]))
     {
         $qid = $_REQUEST["qid"];

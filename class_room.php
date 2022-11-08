@@ -128,6 +128,13 @@
         ?>
         <div class="menu">
             <fieldset style="background-color: #0ead88;">
+                <?php
+                $result4 = mysqli_query($con,"select * from class_room where sid like '%$uid%'");
+                while($rows = mysqli_fetch_assoc($result4))
+                {
+                    $classname = $rows["CNAME"]; 
+                }    
+                ?>
                 <h3>Completed Quiz</h3>
                 <br>
                 <div class="scroll" style="height:170px;">
@@ -271,7 +278,7 @@
                 {
                 ?>
                 <td>
-                    <button class="quizbutton" onclick="opentarget('<?php echo $rows["QID"];?>')"><?php echo $rows["QNAME"];?></button>
+                    <button class="quizbutton" onclick="opentarget('<?php echo $rows["QID"];?>','<?php echo $utype;?>')"><?php echo $rows["QNAME"];?></button>
                 </td>
                 <?php
                 if($count%4===3)

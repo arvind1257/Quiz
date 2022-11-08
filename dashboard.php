@@ -126,6 +126,34 @@
                 </tr>
             </table>
         </div>
+        <?php 
+        date_default_timezone_set("Asia/Kolkata");   //India time (GMT+5:30)
+        $currentdate = date('Y-m-d');
+        $currenttime = date('H:i');
+        $result4 = mysqli_query($con,"select * from class_room where sid like '%$uid%'");
+        while($rows1 = mysqli_fetch_assoc($result4))
+        {
+            $result = mysqli_query($con,"select * from qlist where cid='".$rows1["CID"]."'");
+            while($rows = mysqli_fetch_assoc($result))
+            {
+                if($rows["QDATE"]==$currentdate)
+                {
+                    if($rows["STIME"]<=$currenttime)
+                    {
+                        $check=mysqli_query($con,"update qlist set status='ACTIVE' where qid='".$rows["QID"]."'");
+                        if($rows["ETIME"]<=$currenttime)
+                        {
+                            $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='".$rows["QID"]."'");
+                        }
+                    }
+                }
+                else if($rows["QDATE"]<$currentdate)
+                {
+                    $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='".$rows["QID"]."'");
+                }
+            }
+        }
+        ?>    
         <div class="menu">
             <fieldset style="background-color: #0ead88;" class="scroll">
             <table cellspacing="10" style="width:100%">
@@ -155,24 +183,35 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        
                         <details>
                             <summary>UPCOMING</summary>
                             <?php
+                            $flag=0;
                             $sql2="select qlist.qname,class_room.cname,qlist.qdate,qlist.status from class_room INNER JOIN qlist on class_room.cid=qlist.cid where class_room.sid like '%$uid%' or class_room.tid like '%$uid%' ";
                             $result2 = mysqli_query($con,$sql2);
                             while($rows = mysqli_fetch_assoc($result2))
                             {
-                            ?>
-                            <div class="tab">
-                            <?php 
                             if($rows["status"]=="UPCOMING")
                             {
+                                $flag=1;
+                            ?>
+                            <div class="tab">
+                            <?php     
                             $date=date_create($rows["qdate"]);
                                 echo $rows["cname"]." -- ".$rows["qname"]." -- ".date_format($date,"M d,Y");
-                            }
                             ?>
                             </div>
                             <?php
+                            }
+                            }
+                            if($flag==0)
+                            {
+                                ?>
+                                <div class="tab">
+                                No Upcoming Quiz
+                                </div>
+                                <?php
                             }
                             ?>
                         </details>

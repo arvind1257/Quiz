@@ -525,7 +525,7 @@
                             document.getElementById('status').innerHTML=": Completed";
                             document.getElementById('download').style.display="";
                             document.getElementById('student_list').style.display="none";
-                            document.getElementById('edit').style.display="none";
+                            //document.getElementById('edit').style.display="none";
                             //document.getElementById('student_list2').style.display="";
                         }
                     }
