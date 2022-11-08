@@ -183,41 +183,16 @@
             {
                 if($rows["STIME"]<=$currenttime)
                 {
-                    echo 'hi';
                     $check=mysqli_query($con,"update qlist set status='ACTIVE' where qid='$qid'");
-                    if($check)
-                    {
-                        echo "done1";
-                    }
-                    else
-                    {
-                        echo "error1";
-                    }
                     if($rows["ETIME"]<=$currenttime)
                     {
                         $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='$qid'");
-                        if($check1)
-                        {
-                            echo "done2";
-                        }
-                        else
-                        {
-                            echo "error2";
-                        }
                     }
                 }
             }
             else if($rows["QDATE"]<$currentdate)
             {
                 $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='$qid'");
-                        if($check1)
-                        {
-                            echo "done2";
-                        }
-                        else
-                        {
-                            echo "error2";
-                        }
             }
             $qdate = $rows["QDATE"];
             $qname = $rows["QNAME"];
