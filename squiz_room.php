@@ -176,6 +176,15 @@
         date_default_timezone_set("Asia/Kolkata");   //India time (GMT+5:30)
         $currentdate = date('Y-m-d');
         $currenttime = date('H:i');
+        $result2 = mysqli_query($con,"select distinct(status) from qattempt where qid='$qid' and sid='$uid'");
+        while($rows1 = mysqli_fetch_assoc($result2))
+        {
+            if($rows1["status"]=="Completed")
+            {
+                break;
+            }
+            else
+            {
         $result = mysqli_query($con,"select * from qlist where qid='$qid'");
         while($rows = mysqli_fetch_assoc($result))
         {
@@ -191,6 +200,7 @@
                     if($rows["ETIME"]<=$currenttime)
                     {
                         $check1 = mysqli_query($con,"update qlist set status='COMPLETED' where qid='$qid'");
+                        mysqli_query($con,"update qattempt set status='Not Started' where qid='$qid' and sid='$uid'");
                         $status = "COMPLETED";
                     }
                 }
@@ -204,6 +214,8 @@
             $stime = $rows["STIME"];
             $etime = $rows["ETIME"];
             $shuffle = $rows["SHUFFLE"];
+        }
+            }
         }
         ?>
         <div class="menu">
@@ -289,9 +301,19 @@
             let end = document.form1.etime.value.split(":");
             function gettime(){
                 let date = new Date();
+                let d = date.getDate();
+                let mo = date.getMonth()+1;
+                let y = date.getFullYear();
                 let h = date.getHours();
                 let m = date.getMinutes();
                 let s = date.getSeconds();
+                let d1=" ",mo1=" ",y1=" ";
+                if(d<10) d1 = "0"+d;
+                else d1 = ""+d;
+                if(mo<10) mo1 = "0"+mo;
+                else mo1 = ""+mo;
+                if(y<10) y1 = "0"+y;
+                else y1 = ""+y;
                 let h1=" ",s1=" ",m1=" ";
                 if(h<10) h1 = "0"+h;
                 else h1 = h;
@@ -299,18 +321,25 @@
                 else s1 = s;
                 if(m<10) m1 = "0"+m;
                 else m1 = m;
-                if((start[0]==h1 && start[1]==m1 && s1=="00"))
+                if((test_date[0]===y1) && (test_date[1]===mo1) && (test_date[2]===d1))
                 {
-                    location.href="squiz_room.php?qid="+document.getElementById('qid').value;
+                    if((start[0]==h1 && start[1]==m1 && s1=="00"))
+                    {
+                        location.href="squiz_room.php?qid="+document.getElementById('qid').value;
+                    }
+                    if((end[0]==h1 && end[1]==m1 && s1=="00"))
+                    {
+                        alert("Time Over. Quiz Submitted Successfully");
+                        document.getElementById('form1').submit();
+                    }
                 }
-                if((end[0]==h1 && end[1]==m1 && s1=="00"))
+                else if(((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]<d1)) || ((test_date[0]==y1) && (test_date[1]<mo1)) || (test_date[0]<y1))
                 {
-                    alert("Time Over. Quiz Submitted Successfully");
-                    document.getElementById('form1').submit();
-                }
-                if((end[0]==h1 && end[1]<m1 ) || (end[0]<h1))
-                {
-                    location.href="cquiz_room.php?qid="+document.getElementById('qid').value;
+                    if((end[0]==h1 && end[1]<m1 ) || (end[0]<h1))
+                    {
+                        alert("hi");
+                        location.href="cquiz_room.php?qid="+document.getElementById('qid').value;
+                    }
                 }
                 document.getElementById('currenttime').innerHTML=h1+":"+m1+":"+s1;
                 setTimeout('gettime()',1000);                    
@@ -364,6 +393,7 @@
                 document.getElementById('tabcontent1').style.display="block";
                 document.getElementById('tabcontent').style.display="none";
                 document.getElementById('status').innerHTML=": Completed";    
+                location.href="cquiz_room.php?qid="+document.getElementById('qid').value;
             }
             else
             {

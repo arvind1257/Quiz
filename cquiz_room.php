@@ -83,8 +83,15 @@
                 width:80%;
                 padding:10px;
                 font-size:18pt;
-                margin-bottom:10px;
                 border: 2px solid #0ead88;
+                box-shadow: 0px 0px 5px 2px grey;
+            }
+            .correctanswer{
+                width:80%;
+                padding:10px;
+                font-size: 20pt;
+                margin-bottom:10px;
+                background-color:#0ead88;
                 box-shadow: 0px 0px 5px 2px grey;
             }
             .answerinput{
@@ -147,6 +154,10 @@
                     width: 100%;
                     margin-top: 0;
                 }
+                #currenttime{
+                    font-size:15pt;
+                    width:20%;
+                }
             }
         </style>
     </head>
@@ -186,7 +197,6 @@
                 if($rows["STIME"]<=$currenttime)
                 {
                     $check=mysqli_query($con,"update qlist set status='ACTIVE' where qid='$qid'");
-                    mysqli_query($con,"update qattempt set status='Started' where qid='$qid' and sid='$uid'");
                     $status = "ACTIVE";
                     if($rows["ETIME"]<=$currenttime)
                     {
@@ -219,7 +229,7 @@
                 </tr>
                 <tr>
                     <td>Quiz Date</td>
-                    <td> : <input form="form1" type="date" name="qdate" value="<?php echo $qdate; ?>" readonly></td>
+                    <td> :<input form="form1" type="date" name="qdate" value="<?php echo $qdate; ?>" readonly></td>
                 </tr>
                 <tr>
                     <td>Start Time</td>
@@ -232,6 +242,24 @@
                 <tr>
                     <td>Quiz Status</td>
                     <td id="status"> : <?php  echo $status;?></td>
+                </tr>
+                <tr id="marks">
+                    <td>Mark</td>
+                    <?php
+                    $result3=mysqli_query($con,"SELECT distinct(status),marks FROM qmarks inner join qattempt on qattempt.qid = qmarks.qid and qattempt.sid = qmarks.sid where qmarks.sid='$uid' and qattempt.qid='$qid';");
+                    if($rows=mysqli_fetch_assoc($result3))
+                    {
+                        ?>
+                        <td> : <?php echo $rows["marks"]?></td>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <td> : 10</td>
+                        <?php
+                    }
+                    ?>
                 </tr>
                 </table>
             </fieldset>
@@ -246,40 +274,79 @@
             <fieldset class="scroll">
                 <legend><font size="6pt"><b><?php echo $qname;?></b></font></legend>
                     <?php 
+                    
                     $i=0;
-                    $result1 = mysqli_query($con,"select * from qquestions where qid='$qid'");
+                    $result1 = mysqli_query($con,"SELECT * FROM qquestions where qid='$qid'");
+                    $flag=0;
                     while($rows = mysqli_fetch_assoc($result1))
                     {
-                    ?>
-                    <div id="questions">
-                        <div class="question center">
-                            <p><?php echo "Question ".($i+1).".";?></p>
-                            <span style="color:white;"><?php echo $rows["QUESTIONS"]; ?></span>
-                            <input form="form1" type="hidden" name="question[<?php echo ($i+1);?>]" value="<?php echo $rows["QUESTIONS"]?>" />
-                        </div>  
-                        <div class="answer center">
-                            <input form="form1" type="hidden" name="type[<?php echo ($i+1);?>]" value="<?php echo $rows["TYPE"];?>"/>
-                            <ol type="A">
-                            <?php 
-                            for($j=1;$j<=4;$j++)
+                        $correctanswer = explode(",",$rows["ANSWER"]);
+                        $result2 = mysqli_query($con,"SELECT * from qattempt where sid='".$uid."' and questions='".$rows["QUESTIONS"]."' and qid='".$rows["QID"]."'");
+                        while($rows1 = mysqli_fetch_assoc($result2))
+                        {
+                            $answer = explode(",",$rows1["ANSWER"]);
+                            echo $uid;
+                            echo $rows1["STATUS"];
+                            if($rows1["STATUS"]=="Not Started" || $rows1["STATUS"]=="Started")
                             {
-                            ?>
-                                <li><input form="form1" type="<?php echo $rows["TYPE"];?>" name="option[<?php echo ($i+1);?>][]" value="<?php echo $rows["OPTION$j"]; ?>"/>
-                                <?php echo $rows["OPTION$j"];?></li>
-                            <?php
+                                $flag=1;
+                                ?>
+                                <p style="font-size:50px; text-align:center; vertical-align:middle;">Quiz got Over</p>
+                                <?php
+                                break;
                             }
-                            ?>
-                            </ol>
+                        
+                        ?>
+                        <div id="questions">
+                            <div class="question center">
+                                <p><?php echo "Question ".($i+1).".";?></p>
+                                <span style="color:white;"><?php echo $rows["QUESTIONS"]; ?></span>
+                            </div>  
+                            <div class="answer center">
+                                <ol type ="A">
+                                <?php 
+                                for($j=1;$j<=4;$j++)
+                                { 
+                                    $flag=0;
+                                    ?>
+                                    <li>
+                                    <?php echo $rows["OPTION$j"];
+                                    if(in_array($rows["OPTION$j"],$answer))
+                                    {
+                                        if(in_array($rows["OPTION$j"],$correctanswer))
+                                        {
+                                        ?>
+                                        <img src="tick.png" width="30" height="30" alt="no image">
+                                        <?php
+                                        }
+                                        else
+                                        {
+                                        ?>
+                                        <img src="cross.jpg" width="30" height="30" alt="no image">
+                                        <?php
+                                        }
+                                    }
+                                    ?> 
+                                    </li>
+                                    <?php
+                                }
+                                ?>
+                                </ol>
+                            </div>
+                            <div class="correctanswer center">
+                                <p>Correct Answer :  <span style="color:white;"><?php echo implode(",", $correctanswer); ?></span></p>
+                            </div>
                         </div>
-                    </div>
-                    <?php 
-                    $i++;
+                        <?php 
+                        }
+                        $i++;
+                        if($flag==1)
+                        {
+                            break;
+                        }
                     }        
                     ?>
                     <input type="hidden" id="count" value="<?php echo $i?>"/>
-                    <div class="savebutton">
-                        <input onclick="submit1()" type="submit" value="Submit"/>
-                    </div>
             </fieldset>
         </div>
         <script>
@@ -304,52 +371,60 @@
             }
             gettime();
             
-            let date = new Date();
-            let d = date.getDate();
-            let mo = date.getMonth()+1;
-            let y = date.getFullYear();
-            let h = date.getHours();
-            let m = date.getMinutes();
-            let s = date.getSeconds();
-            let d1=" ",mo1=" ",y1=" ";
-            if(d<10) d1 = "0"+d;
-            else d1 = ""+d;
-            if(mo<10) mo1 = "0"+mo;
-            else mo1 = ""+mo;
-            if(y<10) y1 = "0"+y;
-            else y1 = ""+y;
-            let h1=" ",s1=" ",m1=" ";
-            if(h<10) h1 = "0"+h;
-            else h1 = ""+h;
-            if(s<10) s1 = "0"+s;
-            else s1 = ""+s;
-            if(m<10) m1 = "0"+m;
-            else m1 = ""+m;
-            if((test_date[0]===y1) && (test_date[1]===mo1) && (test_date[2]===d1))
-            {
-               
-                if((end[0]===h1 && end[1]<=m1)||(end[0]<h1))
+            function gettime1(){
+                let date = new Date();
+                date.setMinutes( date.getMinutes() - 10 );
+                let h = date.getHours();
+                let m = date.getMinutes();
+                let s = date.getSeconds();
+                let d = date.getDate();
+                let mo = date.getMonth()+1;
+                let y = date.getFullYear();
+                let d1=" ",mo1=" ",y1=" ";
+                if(d<10) d1 = "0"+d;
+                else d1 = ""+d;
+                if(mo<10) mo1 = "0"+mo;
+                else mo1 = ""+mo;
+                if(y<10) y1 = "0"+y;
+                else y1 = ""+y;
+                let h1=" ",s1=" ",m1=" ";
+                if(h<10) h1 = "0"+h;
+                else h1 = h;
+                if(s<10) s1 = "0"+s;
+                else s1 = s;
+                if(m<10) m1 = "0"+m;
+                else m1 = m;
+                if((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]==d1))
+                {  
+                    if((end[0]==h1 && end[1]<=m1)||(end[0]<h1))
+                    {
+                        document.getElementById('tabcontent').style.display="none";
+                        document.getElementById('tabcontent1').style.display="";
+                        document.getElementById('marks').style.display="";
+                    }
+                    else
+                    {
+                        document.getElementById('tabcontent1').style.display="none";
+                        document.getElementById('marks').style.display="none";
+                        document.getElementById('tabcontent').style.display="";
+                    }
+                }  
+                else if(((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]<d1)) || ((test_date[0]==y1) && (test_date[1]<mo1)) || (test_date[0]<y1))
                 {
-                    document.getElementById('tabcontent').style.display="none";
-                    document.getElementById('tabcontent1').style.display="";
+                    document.getElementById('tabcontent1').style.display="block";
+                    document.getElementById('marks').style.display="block";
+                    document.getElementById('tabcontent').style.display="none"; 
                 }
                 else
                 {
-                    document.getElementById('tabcontent1').style.display="none";
+
                     document.getElementById('tabcontent').style.display="";
+                    document.getElementById('tabcontent1').style.display="none";
+                    document.getElementById('marks').style.display="none";
                 }
+                setTimeout('gettime1()',10000);                    
             }
-            else if(((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]<d1)) || ((test_date[0]==y1) && (test_date[1]<mo1)) || (test_date[0]<y1))
-            {
-                document.getElementById('tabcontent1').style.display="block";
-                document.getElementById('tabcontent').style.display="none"; 
-            }
-            else
-            {
-                
-                document.getElementById('tabcontent').style.display="";
-                document.getElementById('tabcontent1').style.display="none";
-            }
+            gettime1();
             function submit1()
             {
                 var n = parseInt(document.getElementById('count').value);

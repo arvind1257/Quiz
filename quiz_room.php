@@ -261,7 +261,7 @@
                     <td id="status"> : <?php  echo $status;?></td>
                 </tr>
                 <tr>
-                    <td id="student_list" colspan="2">
+                    <td id="student_list1" colspan="2">
                         <div class="scroll" style="height:200px;">
                         <table cellspacing="20" class="tableview" >
                             <tr>
@@ -285,7 +285,45 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" id="download"><button class="logoutbutton">Download</button></td>
+                    <td id="student_list2" colspan="2">
+                        <div class="scroll" style="height:200px;">
+                        <table cellspacing="20" class="tableview" >
+                            <tr>
+                                <th>Reg</th>
+                                <th>Mark</th>
+                            </tr>
+                            <?php 
+                            $result3 = mysqli_query($con,"select distinct(sid),status,fname from qattempt inner join login on sid=uid where qid='$qid'");
+                            while($rows = mysqli_fetch_array($result3))
+                            {
+                            ?>
+                            <tr>
+                                <td><?php echo $rows["fname"];?><br><?php echo $rows["sid"];?></td>
+                                <?php
+                                if($rows["status"]=="Completed")
+                                {
+                                    $result4 = mysqli_query($con,"select * from qmarks where qid='$qid' and sid='".$rows["sid"]."' ");
+                                    while($rows1 = mysqli_fetch_assoc($result4))
+                                    {
+                                        ?>
+                                        <td><?php echo $rows1["MARKS"];?></td>
+                                        <?php
+                                    }
+                                }
+                                else
+                                {
+                                ?>
+                                <td>0</td>
+                                <?php
+                                }
+                                ?>
+                            </tr>
+                            <?php  
+                            }
+                            ?>
+                        </table>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <?php if(isset($_REQUEST["edit"])){ ?>
@@ -370,7 +408,8 @@
                     $result2 = mysqli_query($con,"select * from qquestions where qid='$qid'");
                     while($rows = mysqli_fetch_assoc($result2))
                     {
-                    $answer = explode(",",$rows["ANSWER"]);    
+                    $answer = explode(",",$rows["ANSWER"]);
+                    print_r($answer);
                     ?>
                     <div id="questions">
                         <div class="question center">
@@ -488,9 +527,8 @@
                 if((start[0]===h1 && start[1]<=m1)||(start[0]<h1))
                 {
                     document.getElementById('tabcontent1').style.display="block";
-                    document.getElementById('download').style.display="none";
-                    document.getElementById('student_list').style.display="";
-                    //document.getElementById('student_list2').style.display="none";
+                    document.getElementById('student_list2').style.display="none";
+                    document.getElementById('student_list1').style.display="";
                     document.getElementById('tabcontent').style.display="none";
                     document.getElementById('status').innerHTML=": Started";
                     if(end[0]<=h1)
@@ -498,34 +536,33 @@
                         if((end[0]===h1 && end[1]<=m1)||(end[0]<h1))
                         {
                             document.getElementById('status').innerHTML=": Completed";
-                            document.getElementById('download').style.display="";
-                            document.getElementById('student_list').style.display="none";
+                            document.getElementById('student_list2').style.display="";
+                            document.getElementById('student_list1').style.display="none";
                             //document.getElementById('edit').style.display="none";
-                            //document.getElementById('student_list2').style.display="";
                         }
                     }
                 }
                 else
                 {
                     document.getElementById('tabcontent1').style.display="none";
-                    document.getElementById('student_list').style.display="none";
-                    document.getElementById('download').style.display="none";
+                    document.getElementById('student_list1').style.display="none";
+                    document.getElementById('student_list2').style.display="none";
                 }
             }
             else if(((test_date[0]==y1) && (test_date[1]==mo1) && (test_date[2]<d1)) || ((test_date[0]==y1) && (test_date[1]<mo1)) || (test_date[0]<y1))
             {
                 document.getElementById('tabcontent1').style.display="block";
-                document.getElementById('edit').style.display="none";
-                document.getElementById('student_list').style.display="none";
-                document.getElementById('download').style.display="";
+                //document.getElementById('edit').style.display="none";
+                document.getElementById('student_list1').style.display="none";
+                document.getElementById('student_list2').style.display="";
                 document.getElementById('tabcontent').style.display="none";
                 document.getElementById('status').innerHTML=": Completed";    
             }
             else
             {
                 document.getElementById('tabcontent1').style.display="none";
-                document.getElementById('download').style.display="none";
-                document.getElementById('student_list').style.display="none";
+                document.getElementById('student_list2').style.display="none";
+                document.getElementById('student_list1').style.display="none";
             }
         </script>
     </body> 

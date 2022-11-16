@@ -210,7 +210,8 @@
                 <br><br>
                 <h3>Student List : </h3>
                 <br>
-                    <table class="tableview" cellspacing="10" style="width:100%;">
+                    <div style="width:100%; overflow-y: scroll;height:300px;">
+                    <table cellspacing="10" style="width:100%;">
                         <tr>
                             <th>Names</th>
                             <th>Edit</th>
@@ -236,6 +237,7 @@
                         }}
                         ?>
                     </table>
+                    </div>
                     <br>
                     <button id="view2" class="logoutbutton" onclick="add()">ADD STUDENTS</button>
                     <div id="view1">
