@@ -7,7 +7,7 @@ if(!isset($_SESSION["uid"]) || !isset($_SESSION["uname"]) || !isset($_SESSION["u
 }
 else
 {
-    $con = mysqli_connect("sql12.freesqldatabase.com","sql12575246","jpuCIqBGV5","sql12575246");
+    $con = mysqli_connect("localhost","root","123456","quiz");
     $uid = $_SESSION["uid"];
     $uname = $_SESSION["uname"];
     $utype = $_SESSION["utype"];

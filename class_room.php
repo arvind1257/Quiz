@@ -191,7 +191,7 @@
         <div class="menu">
             <fieldset style="background-color: #0ead88;" class="scroll">
                 <?php 
-                $result1 = mysqli_query($con,"select * from class_room where tid='$uid'");
+                $result1 = mysqli_query($con,"select * from class_room where tid='$uid' AND cid='".$_REQUEST["no"]."'");
                 while($rows = mysqli_fetch_assoc($result1))
                 {
                     $classname = $rows["CNAME"]; 

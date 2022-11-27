@@ -241,8 +241,6 @@
                         <th>Class ID</th>
                         <th>Class Name</th>
                         <th>No of Students</th>
-                        <th>No of Upcoming Quiz</th>
-                        <th>No of Completed Quiz</th>
                         <th>Delete</th>
                     </tr>
                     <?php 
@@ -262,8 +260,6 @@
                         <td style="width:30%;" align="center"><?php echo $rows["CID"]; ?></td>
                         <td style="width:30%;" align="center"><?php echo $rows["CNAME"]; ?></td>
                         <td style="width:10%;" align="center"><?php echo $count; ?></td>
-                        <Td style="width:10%;" align="center"></td>
-                        <Td style="width:10%;" align="center"></td>
                         <td style="width:10%;" align="center">
                             
                             <button style="border:none;" onclick='location.href="<?php echo $delete; ?>"'>

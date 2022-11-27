@@ -6,12 +6,15 @@
     {
         $characters = 'abcdefghijklmnopqrstuvwxyz';
         $randomString = '';
-        for ($j = 0; $j < 2; $j++) {
+        for ($j = 0; $j < 3; $j++) {
         for ($i = 0; $i < 3; $i++) {
             $index = rand(0, strlen($characters) - 1);
             $randomString .= $characters[$index];
         }
+        if($j!=2)
+        {
         $randomString .= '-';
+        }
         }
         mysqli_query($con,"insert into class_room(cid,cname,tid) values('$randomString','".$_REQUEST["no"]."','$uid')");
         header("Location: dashboard.php");
@@ -180,7 +183,7 @@
             for($j=1;$j<count($option[$i]);$j++){ 
                 $correctanswer.=",".$option[$i][$j];
             }
-            mysqli_query($con,"insert into qquestions(qid,questions,option1,option2,option3,option4,answer,type,qno) values('$qid','$question[$i]','".$answer[$i][0]."','".$answer[$i][1]."','".$answer[$i][2]."','".$answer[$i][3]."','$correctanswer','$type[$i]','')");
+            mysqli_query($con,"insert into qquestions(qid,questions,option1,option2,option3,option4,answer,type,qno) values('$qid','$question[$i]','".$answer[$i][0]."','".$answer[$i][1]."','".$answer[$i][2]."','".$answer[$i][3]."','$correctanswer','$type[$i]','$i')");
             for($j=0;$j<count($students);$j++)
             {
                 mysqli_query($con,"insert into qattempt(qid,questions,answer,sid,status,qno) values('$qid','$question[$i]','','$students[$j]','Not Started','$i')");
